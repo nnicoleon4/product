@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grasshopper Air Mobility - Drone Delivery Timeline</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide-react@latest/dist/umd/lucide-react.js"></script>
+    <style>
+        body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif; }
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        const { Play, Pause, RotateCcw, Package, Smartphone, MapPin, Camera, CheckCircle } = lucideReact;
+
+        const DroneDeliveryTimeline = () => {
+          const [currentFrame, setCurrentFrame] = useState(0);
+          const [isPlaying, setIsPlaying] = useState(false);
+          const [progress, setProgress] = useState(0);
+
+          const timelineFrames = [
+            {
+              id: 0,
+              title: "Order Placement",
+              time: "0-2 min",
+              phase: "Pre-Order",
+              description: "Customer selects drone delivery option at checkout",
+              icon: React.createElement(Smartphone, { className: "w-6 h-6" }),
+              color: "bg-green-500",
+              visual: "Customer browsing Amazon Prime, selecting 'Drone Delivery - Under 1 Hour' option",
+              keyPoint: "Speed advantage highlighted vs traditional delivery"
+            },
+            {
+              id: 1,
+              title: "Order Processing",
+              time: "2-10 min",
+              phase: "Preparation",
+              description: "Order received at micro-warehouse, drone assigned",
+              icon: React.createElement(Package, { className: "w-6 h-6" }),
+              color: "bg-emerald-500",
+              visual: "Automated system prepares package, loads MK30 drone",
+              keyPoint: "Efficiency of automated fulfillment process"
+            },
+            {
+              id: 2,
+              title: "Flight Authorization",
+              time: "8-10 min",
+              phase: "Preparation",
+              description: "BVLOS clearance obtained, flight path calculated",
+              icon: React.createElement(MapPin, { className: "w-6 h-6" }),
+              color: "bg-emerald-500",
+              visual: "FAA approval process, optimal route planning avoiding obstacles",
+              keyPoint: "Regulatory compliance and safety assurance"
+            },
+            {
+              id: 3,
+              title: "Drone Launch",
+              time: "10-15 min",
+              phase: "Dispatch",
+              description: "MK30 drone takes off, customer notified",
+              icon: React.createElement(Play, { className: "w-6 h-6" }),
+              color: "bg-lime-500",
+              visual: "Drone launching from micro-warehouse, push notification sent",
+              keyPoint: "Real-time communication begins"
+            },
+            {
+              id: 4,
+              title: "En-Route Tracking",
+              time: "15-35 min",
+              phase: "Transit",
+              description: "Live GPS tracking, bypassing road traffic",
+              icon: React.createElement(MapPin, { className: "w-6 h-6" }),
+              color: "bg-teal-500",
+              visual: "Drone flying over suburban houses, app showing live location",
+              keyPoint: "Certainty through continuous tracking"
+            },
+            {
+              id: 5,
+              title: "Final Approach",
+              time: "35-45 min",
+              phase: "Transit",
+              description: "Customer selects precise drop zone via aerial map",
+              icon: React.createElement(MapPin, { className: "w-6 h-6" }),
+              color: "bg-teal-500",
+              visual: "Aerial view of delivery area, customer choosing exact spot",
+              keyPoint: "Precision delivery differentiation"
+            },
+            {
+              id: 6,
+              title: "Autonomous Landing",
+              time: "45-50 min",
+              phase: "Delivery",
+              description: "Obstacle avoidance sensors activate, safe landing",
+              icon: React.createElement(CheckCircle, { className: "w-6 h-6" }),
+              color: "bg-green-600",
+              visual: "Drone safely landing at customer-selected location",
+              keyPoint: "Safety technology demonstration"
+            },
+            {
+              id: 7,
+              title: "Package Drop",
+              time: "48-50 min",
+              phase: "Delivery",
+              description: "Package deposited, photo taken automatically",
+              icon: React.createElement(Camera, { className: "w-6 h-6" }),
+              color: "bg-green-600",
+              visual: "Package placed at drop zone, automatic photo capture",
+              keyPoint: "Proof of delivery system"
+            },
+            {
+              id: 8,
+              title: "Delivery Confirmation",
+              time: "50-55 min",
+              phase: "Confirmation",
+              description: "Customer receives photo proof, <1 hour completion",
+              icon: React.createElement(CheckCircle, { className: "w-6 h-6" }),
+              color: "bg-emerald-600",
+              visual: "Push notification with delivery photo, timestamp showing success",
+              keyPoint: "Sub-60-minute guarantee fulfilled"
+            },
+            {
+              id: 9,
+              title: "Customer Experience",
+              time: "55-60 min",
+              phase: "Confirmation",
+              description: "Package retrieved, experience rated",
+              icon: React.createElement(CheckCircle, { className: "w-6 h-6" }),
+              color: "bg-emerald-600",
+              visual: "Happy customer with package, rating experience in app",
+              keyPoint: "Complete customer satisfaction cycle"
+            }
+          ];
+
+          useEffect(() => {
+            let interval;
+            if (isPlaying) {
+              interval = setInterval(() => {
+                setProgress(prev => {
+                  if (prev >= 100) {
+                    if (currentFrame < timelineFrames.length - 1) {
+                      setCurrentFrame(curr => curr + 1);
+                      return 0;
+                    } else {
+                      setIsPlaying(false);
+                      return 100;
+                    }
+                  }
+                  return prev + 2;
+                });
+              }, 100);
+            }
+            return () => clearInterval(interval);
+          }, [isPlaying, currentFrame, timelineFrames.length]);
+
+          const handlePlay = () => {
+            setIsPlaying(!isPlaying);
+          };
+
+          const handleReset = () => {
+            setCurrentFrame(0);
+            setProgress(0);
+            setIsPlaying(false);
+          };
+
+          const handleFrameClick = (frameIndex) => {
+            setCurrentFrame(frameIndex);
+            setProgress(0);
+            setIsPlaying(false);
+          };
+
+          const currentFrameData = timelineFrames[currentFrame];
+
+          return React.createElement(
+            'div',
+            { className: "max-w-6xl mx-auto p-6 bg-gradient-to-br from-green-50 to-emerald-100 min-h-screen" },
+            
+            // Header
+            React.createElement(
+              'div',
+              { className: "text-center mb-8" },
+              React.createElement('h1', { className: "text-4xl font-bold text-gray-800 mb-2" }, "Grasshopper Air Mobility"),
+              React.createElement('p', { className: "text-xl text-gray-600" }, "Drone Delivery Service - Interactive Timeline"),
+              React.createElement('p', { className: "text-lg text-green-600 font-semibold" }, "Sub-60 Minute Delivery Experience")
+            ),
+
+            // Controls
+            React.createElement(
+              'div',
+              { className: "flex justify-center items-center gap-4 mb-8" },
+              React.createElement(
+                'button',
+                {
+                  onClick: handlePlay,
+                  className: "flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                },
+                isPlaying ? React.createElement(Pause, { className: "w-5 h-5" }) : React.createElement(Play, { className: "w-5 h-5" }),
+                isPlaying ? 'Pause' : 'Play',
+                ' Timeline'
+              ),
+              React.createElement(
+                'button',
+                {
+                  onClick: handleReset,
+                  className: "flex items-center gap-2 px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                },
+                React.createElement(RotateCcw, { className: "w-5 h-5" }),
+                'Reset'
+              )
+            ),
+
+            // Main Display
+            React.createElement(
+              'div',
+              { className: "bg-white rounded-xl shadow-2xl p-8 mb-8" },
+              React.createElement(
+                'div',
+                { className: "grid md:grid-cols-2 gap-8" },
+                
+                // Current Frame Details
+                React.createElement(
+                  'div',
+                  null,
+                  React.createElement(
+                    'div',
+                    { className: "flex items-center gap-3 mb-6" },
+                    React.createElement(
+                      'div',
+                      { className: `p-3 rounded-full ${currentFrameData.color} text-white` },
+                      currentFrameData.icon
+                    ),
+                    React.createElement(
+                      'div',
+                      null,
+                      React.createElement('h2', { className: "text-2xl font-bold text-gray-800" }, currentFrameData.title),
+                      React.createElement('p', { className: "text-gray-600" }, `${currentFrameData.phase} Phase • ${currentFrameData.time}`)
+                    )
+                  ),
+                  
+                  React.createElement(
+                    'div',
+                    { className: "space-y-4" },
+                    React.createElement(
+                      'div',
+                      null,
+                      React.createElement('h3', { className: "font-semibold text-gray-700 mb-2" }, "Description:"),
+                      React.createElement('p', { className: "text-gray-600" }, currentFrameData.description)
+                    ),
+                    React.createElement(
+                      'div',
+                      null,
+                      React.createElement('h3', { className: "font-semibold text-gray-700 mb-2" }, "Visual Scene:"),
+                      React.createElement('p', { className: "text-gray-600 italic" }, currentFrameData.visual)
+                    ),
+                    React.createElement(
+                      'div',
+                      null,
+                      React.createElement('h3', { className: "font-semibold text-gray-700 mb-2" }, "Key Value Point:"),
+                      React.createElement('p', { className: "text-green-600 font-medium" }, currentFrameData.keyPoint)
+                    )
+                  ),
+
+                  // Progress Bar
+                  React.createElement(
+                    'div',
+                    { className: "mt-6" },
+                    React.createElement(
+                      'div',
+                      { className: "flex justify-between text-sm text-gray-600 mb-2" },
+                      React.createElement('span', null, "Frame Progress"),
+                      React.createElement('span', null, `${Math.round(progress)}%`)
+                    ),
+                    React.createElement(
+                      'div',
+                      { className: "w-full bg-gray-200 rounded-full h-2" },
+                      React.createElement('div', {
+                        className: `h-2 rounded-full ${currentFrameData.color} transition-all duration-300`,
+                        style: { width: `${progress}%` }
+                      })
+                    )
+                  )
+                ),
+
+                // Visual Representation
+                React.createElement(
+                  'div',
+                  { className: "bg-gradient-to-br from-green-100 to-emerald-200 rounded-lg p-6 flex items-center justify-center" },
+                  React.createElement(
+                    'div',
+                    { className: "text-center" },
+                    React.createElement(
+                      'div',
+                      { className: `w-20 h-20 mx-auto mb-4 rounded-full ${currentFrameData.color} flex items-center justify-center text-white` },
+                      React.cloneElement(currentFrameData.icon, { className: "w-10 h-10" })
+                    ),
+                    React.createElement('h3', { className: "text-lg font-semibold text-gray-800 mb-2" }, currentFrameData.title),
+                    React.createElement('p', { className: "text-sm text-gray-600" }, currentFrameData.time),
+                    React.createElement(
+                      'div',
+                      { className: "mt-4 text-xs text-gray-500" },
+                      `Frame ${currentFrame + 1} of ${timelineFrames.length}`
+                    )
+                  )
+                )
+              )
+            ),
+
+            // Timeline Navigation
+            React.createElement(
+              'div',
+              { className: "bg-white rounded-xl shadow-lg p-6" },
+              React.createElement('h3', { className: "text-lg font-semibold text-gray-800 mb-4" }, "Complete Journey Timeline"),
+              React.createElement(
+                'div',
+                { className: "grid grid-cols-2 md:grid-cols-5 gap-3" },
+                timelineFrames.map((frame, index) =>
+                  React.createElement(
+                    'button',
+                    {
+                      key: frame.id,
+                      onClick: () => handleFrameClick(index),
+                      className: `p-3 rounded-lg text-left transition-all duration-200 ${
+                        index === currentFrame 
+                          ? `${frame.color} text-white transform scale-105 shadow-lg` 
+                          : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                      }`
+                    },
+                    React.createElement(
+                      'div',
+                      { className: "flex items-center gap-2 mb-1" },
+                      React.cloneElement(frame.icon, { className: "w-4 h-4" }),
+                      React.createElement('span', { className: "text-xs font-medium" }, frame.time)
+                    ),
+                    React.createElement('p', { className: "text-sm font-semibold truncate" }, frame.title),
+                    React.createElement('p', { className: "text-xs opacity-75" }, frame.phase)
+                  )
+                )
+              )
+            ),
+
+            // Key Differentials Summary
+            React.createElement(
+              'div',
+              { className: "mt-8 bg-white rounded-xl shadow-lg p-6" },
+              React.createElement('h3', { className: "text-lg font-semibold text-gray-800 mb-4" }, "Key Value Propositions Demonstrated"),
+              React.createElement(
+                'div',
+                { className: "grid md:grid-cols-3 gap-6" },
+                React.createElement(
+                  'div',
+                  { className: "text-center" },
+                  React.createElement(
+                    'div',
+                    { className: "w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-white mx-auto mb-3" },
+                    React.createElement(Play, { className: "w-6 h-6" })
+                  ),
+                  React.createElement('h4', { className: "font-semibold text-gray-800 mb-2" }, "Speed"),
+                  React.createElement('p', { className: "text-sm text-gray-600" }, "Sub-60-minute delivery vs hours/days traditional delivery")
+                ),
+                React.createElement(
+                  'div',
+                  { className: "text-center" },
+                  React.createElement(
+                    'div',
+                    { className: "w-12 h-12 bg-emerald-500 rounded-full flex items-center justify-center text-white mx-auto mb-3" },
+                    React.createElement(MapPin, { className: "w-6 h-6" })
+                  ),
+                  React.createElement('h4', { className: "font-semibold text-gray-800 mb-2" }, "Certainty"),
+                  React.createElement('p', { className: "text-sm text-gray-600" }, "Real-time tracking eliminates \"where's my package\" anxiety")
+                ),
+                React.createElement(
+                  'div',
+                  { className: "text-center" },
+                  React.createElement(
+                    'div',
+                    { className: "w-12 h-12 bg-teal-500 rounded-full flex items-center justify-center text-white mx-auto mb-3" },
+                    React.createElement(CheckCircle, { className: "w-6 h-6" })
+                  ),
+                  React.createElement('h4', { className: "font-semibold text-gray-800 mb-2" }, "Sustainability"),
+                  React.createElement('p', { className: "text-sm text-gray-600" }, "Drone bypasses traffic, reducing emissions on last-mile delivery")
+                )
+              )
+            )
+          );
+        };
+
+        ReactDOM.render(React.createElement(DroneDeliveryTimeline), document.getElementById('root'));
+    </script>
+</body>
+</html>
